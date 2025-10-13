@@ -8,12 +8,11 @@
 
 ### Personal light exposure dataset for Munich, Germany; collected by the Technical University of Munich (TUM) following the protocol of Guidolin et al. 2024 (MeLiDos field study)
 
-**Version v1.0.0**
+**Version v1.0.1**
 
 <!-- badges: start -->
 
-<!-- [![DOI](https://zenodo.org/badge/1039961104.svg)](https://doi.org/10.5281/zenodo.16893901) -->
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.16893901.svg)](https://doi.org/10.5281/zenodo.16893901)
 <!-- badges: end -->
 
 <figure>
@@ -56,10 +55,10 @@ persistent identifier (DOI).
 APA reference:
 
 > Hilden, S., Lee, S., Zauner, J., & Spitschan, M., (2025). Personal
-> light exposure dataset for Munich, Germany (Version 1.0.0) \[Data
+> light exposure dataset for Munich, Germany (Version 1.0.1) \[Data
 > set\]. URL:
 > <https://github.com/MeLiDosProject/HildenEtAl_Dataset_2025>. DOI:
-> doi.org/—
+> doi.org/10.5281/zenodo.16893901
 
 ## Summary of the dataset
 

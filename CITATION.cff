@@ -34,10 +34,10 @@ authors:
     orcid: 'https://orcid.org/0000-0002-8572-9268'
 identifiers:
   - type: doi
-    value: ---
-    description: Zenodo archive (V1.0.0)
+    value: 10.5281/zenodo.17337841
+    description: Zenodo archive (V1.0.1)
   - type: doi
-    value: ---
+    value: 10.5281/zenodo.16893901
     description: Zenodo Archive (latest version)
 repository-code: 'https://github.com/MeLiDosProject/HildenEtAl_Dataset_2025'
 url: 'https://www.melidos.eu'
