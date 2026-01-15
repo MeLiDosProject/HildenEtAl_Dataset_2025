@@ -1,0 +1,101 @@
+---
+title: "Import demographics"
+author: "Johannes Zauner"
+format: 
+  html:
+    self-contained: true
+    code-tools: true
+editor_options: 
+  chunk_output_type: console
+---
+
+## Preface
+
+This document imports the `demographics` and shows descriptive statistics for the site.
+
+## Setup
+
+```{r}
+#| message: false
+library(tidyverse)
+library(LightLogR)
+library(glue)
+library(readxl)
+library(gt)
+library(gtsummary)
+
+remote <- 
+  "https://raw.githubusercontent.com/MeLiDosProject/Data_Metadata_Conventions/main/scripts/"
+
+c("labeling",
+  "radio_factors",
+  "prepare_codebook",
+  "filefinder",
+  "general_parameters",
+  "coltype_checker",
+  "tables"
+) |> walk(\(x) source(paste0(remote, x, ".R")))
+```
+
+## Preparation
+
+```{r}
+#collect codebook
+codebook <- 
+  prepare_codebook("MeLiDosScreeningQuestionnaire_DataDictionary_2024-10-16.csv",
+                   c("online_screening_consent_form", "your_demographics")) |> 
+  filter(!`Variable / Field Name` %in% c("email", "email_2"))
+#collect files
+files <- filefinder("demographics",individual = FALSE)
+#import files
+data <- 
+  read_csv2(files, show_col_types = FALSE) |> 
+  drop_na(redcap_repeat_instance) |> 
+  mutate(native_language = as.logical(native_language))
+#check column types
+coltype_check <- coltype_checker(codebook, data)
+coltype_check$details |> gt()
+#collect relevant columns
+relevant_columns <- 
+  coltype_check$details |> 
+  pull(col)
+#select relevant columns
+data <- data |> select(any_of(relevant_columns))
+#adjust columns
+data <-
+  data |> 
+    mutate(record_id = parse_number(record_id),
+           record_id = sprintf("TUM_S%03d", record_id))
+#label variables
+data <-
+data |> 
+  add_radio_factors(codebook, 
+                    var_col = `Variable / Field Name`, 
+                    type_col = `Field Type`,
+                    levels_col = `Choices, Calculations, OR Slider Labels`
+                    ) |> 
+  add_col_labels(codebook, var_col = `Variable / Field Name`, label_col = `Field Label`)
+#reorder variables
+data <- 
+  data |> 
+  dplyr::relocate(native_language, .before = language_specification) |> 
+  relocate(record_id) |> 
+  select(-consent)
+```
+
+## Summarize results
+
+```{r}
+table_demographics(data)
+gtsave(table_demographics(data) |> as_gt(), filename = "../output/tables/table_demographics.png", vwidth = 800)
+```
+
+### Export
+
+```{r}
+data <- data |> rename(Id = record_id)
+demographics <- data
+path <- "../data/imported/"
+if(!dir.exists(path)) dir.create(path, recursive = TRUE)
+save(demographics, file = "../data/imported/continuous/demographics.RData")
+```

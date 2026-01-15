@@ -21,89 +21,52 @@ library(glue)
 library(readxl)
 library(gt)
 library(gtsummary)
-source("https://raw.githubusercontent.com/MeLiDosProject/Data_Metadata_Conventions/main/scripts/labeling.R")
-source("https://raw.githubusercontent.com/MeLiDosProject/Data_Metadata_Conventions/main/scripts/radio_factors.R")
-source("https://raw.githubusercontent.com/MeLiDosProject/Data_Metadata_Conventions/main/scripts/time_summaries.R")
+
+remote <- 
+  "https://raw.githubusercontent.com/MeLiDosProject/Data_Metadata_Conventions/main/scripts/"
+
+c("labeling",
+  "radio_factors",
+  "time_summaries",
+  "prepare_codebook",
+  "filefinder",
+  "general_parameters",
+  "coltype_checker",
+  "tables"
+) |> walk(\(x) source(paste0(remote, x, ".R")))
 ```
 
-Collect the necessary external information
+## Preparation
 
 ```{r}
-codebook <- 
-  read_csv(
-  "https://raw.githubusercontent.com/MeLiDosProject/Data_Metadata_Conventions/main/codebook/MeLiDosMorningSleepDiaries_DataDictionary_2024-10-16.csv", show_col_types = FALSE
-  )
-#clean up labels
-codebook <-
-  codebook |> 
-    mutate(
-      `Field Label` = 
-        `Field Label` |> 
-        str_remove_all("<div class=\"rich-text-field-label\">|<p>|<em>|</em>|</p>|</div>")
-    )
-```
-
-
-## Collect files
-
-The following files contain sleep-diary information.
-
-```{r}
-#path to participants
-path_part1 <- "../data/raw/individual"
-#path to questionnaire
-path_part2 <- "/continuous/sleepdiary"
-#getting all subfolders
-folders <- dir(path_part1)
-#creating complete folder names
-paths <- glue("{path_part1}/{folders}{path_part2}")
-#collecting file names
-files <- list.files(paths, full.names = TRUE)
-```
-
-## Import files
-
-```{r}
-sleepdiary <- 
-  read_csv2(files[c(2:10)], show_col_types = FALSE) |> drop_na(redcap_repeat_instance)
-sleepdiary2 <- 
-  read_csv2(files[1], show_col_types = FALSE) |> drop_na(redcap_repeat_instance)
-sleepdiary <- 
-sleepdiary2 |> bind_rows(sleepdiary)
-
-```
-
-### Check column types
-
-```{r}
-should_POSIXct <- c("bedtime", "sleep", "offset", "out_ofbed")
-should_numeric <- c("sleepdelay", "awakenings", "awake_duration", "sleepquality", "daytype2")
-should_character <- c("record_id", "comments")
-
-stopifnot(
-  "all of should_POSIXct need to be part of the dataset and of type POSIXct" =
-  should_POSIXct %in% (sleepdiary |> select(where(is.POSIXct)) |> names()),
-  "all of should_numeric need to be part of the dataset and of type numeric" =
-  should_numeric %in% (sleepdiary |> select(where(is.numeric)) |> names()),
-  "all of should_character need to be part of the dataset and of type character" =
-  should_character %in% (sleepdiary |> select(where(is.character)) |> names())
-  )
-```
-
-### Select relevant variables &nonempty rows
-
-```{r}
-sleepdiary <- 
-sleepdiary |> 
-  select(all_of(c(should_character, should_POSIXct, should_numeric)))
-```
-
-
-### Label variables
-
-```{r}
-sleepdiary <-
-sleepdiary |> 
+#collect codebook
+codebook <- prepare_codebook("MeLiDosMorningSleepDiaries_DataDictionary_2024-10-16.csv")
+#collect files
+files <- filefinder("sleepdiary", continuous = TRUE)
+#import files
+data <- read_csv2(files[2:10], show_col_types = FALSE) |> drop_na(redcap_repeat_instance)
+data2 <- read_csv2(files[1], show_col_types = FALSE) |> drop_na(redcap_repeat_instance)
+data <- dplyr::bind_rows(data, data2)
+rm(data2)
+#check column types
+coltype_check <- coltype_checker(codebook, data)
+coltype_check$details |> gt()
+#collect relevant columns: POSIXct, Date & numeric
+relevant_columns <- 
+  coltype_check$details |> 
+  filter(expected %in% c("POSIXct", "numeric", "Date")) |> 
+  pull(col) |> 
+  setdiff(c("status", "scheduledate"))
+#add specific character columns
+relevant_columns <- c("record_id", relevant_columns, "comments")
+#select relevant columns
+data <- data |> select(any_of(relevant_columns))
+data <- 
+  data |> 
+  mutate(record_id = paste0("TUM_S", record_id))
+#label variables
+data <-
+data |> 
   add_radio_factors(codebook, 
                     var_col = `Variable / Field Name`, 
                     type_col = `Field Type`,
@@ -112,47 +75,35 @@ sleepdiary |>
   add_col_labels(codebook, var_col = `Variable / Field Name`, label_col = `Field Label`)
 ```
 
-### Calculate sleep and sleepduration
+## Calculate sleep and sleepduration
 
 ```{r}
-sleepdiary <- 
-sleepdiary |> 
+data <- 
+data |> 
   rename(wake = offset, sleepprep = sleep) |> 
   mutate(sleep = sleepprep + dminutes(sleepdelay),
          sleep_duration = wake - sleep
   )
 
-attr(sleepdiary$sleep, "label") <- "Sleep onset (calculated)"
-attr(sleepdiary$sleep_duration, "label") <- "Sleep duration (calculated)"
-
+attr(data$sleep, "label") <- "Sleep onset (calculated)"
+attr(data$sleep_duration, "label") <- "Sleep duration (calculated)"
 ```
 
-## Summarize diary results
+## Summarize results
 
 ```{r}
-table_sleep <- 
-sleepdiary |> 
-  tbl_summary(include = -c(comments, record_id),
-              statistic = list(all_continuous() ~ "{median} ({p25}, {p75})", 
-                               all_categorical() ~ "{n} ({p}%)",
-                               c(bedtime, sleep, sleepprep)  ~ "{time_median} ({nighttime_p25}, {nighttime_p75})",
-                               c(wake, out_ofbed)  ~ "{time_median} ({daytime_p25}, {daytime_p75})"
-                               ),
-              type = list(awakenings ~ "continuous", awake_duration ~ "continuous"),
-              missing_text = "missing") |> 
-  add_n() |> 
-  bold_labels() |> 
-  modify_header(label = "**Morning sleep diary**") |> 
-  modify_footnote_header("Nighttime variables center on midnight, daytime variables on noon; median for time is based on circular time", columns = stat_0, replace = FALSE)
+table_sleepdiary(data)
 
-table_sleep
-
-gtsave(table_sleep |> as_gt(), filename = "../output/tables/table_sleepdiary.png")
+gtsave(table_sleepdiary(data) |> as_gt(), filename = "../output/tables/table_sleepdiary.png", vwidth = 800)
 ```
 
 ### Export
 
 ```{r}
+data <- data |> rename(Id = record_id)
+sleepdiary <- data
+path <- "../data/imported/continuous/"
+if(!dir.exists(path)) dir.create(path, recursive = TRUE)
 save(sleepdiary, file = "../data/imported/continuous/sleepdiaries.RData")
 ```
 
