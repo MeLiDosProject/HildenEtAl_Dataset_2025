@@ -97,5 +97,5 @@ data <- data |> rename(Id = record_id)
 demographics <- data
 path <- "../data/imported/"
 if(!dir.exists(path)) dir.create(path, recursive = TRUE)
-save(demographics, file = "../data/imported/continuous/demographics.RData")
+save(demographics, file = "../data/imported/demographics.RData")
 ```

@@ -82,11 +82,14 @@ alt="Summary table of personal light exposure (eye-level data)" />
 
 ### Sleep
 
+![Summary table of the morning sleep
+diary](output/tables/table_sleepdiary.png) \## Chronotype
+
 <figure>
-<img src="output/tables/table_sleepdiary.png"
-alt="Summary table of the morning sleep diary" />
-<figcaption aria-hidden="true">Summary table of the morning sleep
-diary</figcaption>
+<img src="output/tables/table_chronotype.png"
+alt="Summary table of the chronotype questionnaires" />
+<figcaption aria-hidden="true">Summary table of the chronotype
+questionnaires</figcaption>
 </figure>
 
 ## Summary of the dataset
