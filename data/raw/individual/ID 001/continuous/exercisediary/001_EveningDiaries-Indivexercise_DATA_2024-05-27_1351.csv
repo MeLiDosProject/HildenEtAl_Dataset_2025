@@ -3,3 +3,7 @@ record_id;redcap_repeat_instrument;redcap_repeat_instance;form_1_complete;instru
 001;exercise_diary;1;;1;3;1;"A short walk in the park";60;360;0;"2024-05-13 23:17:39";"2024-05-13 23:19:15"
 001;exercise_diary;2;;1;3;1;"Walk through a park";30;400;1;"2024-05-15 00:19:08";"2024-05-15 00:19:57"
 001;exercise_diary;3;;1;4;;;30;500;;"2024-05-16 00:16:33";"2024-05-16 00:16:53"
+101;exercise_diary;1;;1;1;2;"Weight training ";60;400;0;"2024-05-17 00:16:33";"2024-05-17 00:16:53"
+101;exercise_diary;2;;1;1;3;"Basketball and weight training ";60;300;0;"2024-05-18 00:16:33";"2024-05-18 00:16:53"
+101;exercise_diary;3;;1;4;;;30;400;;"2024-05-19 00:16:33";"2024-05-19 00:16:53"
+101;exercise_diary;4;;1;3;1;"Running ";30;400;1;"2024-05-20 00:16:33";"2024-05-20 00:16:53"
