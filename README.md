@@ -82,14 +82,29 @@ alt="Summary table of personal light exposure (eye-level data)" />
 
 ### Sleep
 
-![Summary table of the morning sleep
-diary](output/tables/table_sleepdiary.png) \## Chronotype
+<figure>
+<img src="output/tables/table_sleepdiary.png"
+alt="Summary table of the morning sleep diary" />
+<figcaption aria-hidden="true">Summary table of the morning sleep
+diary</figcaption>
+</figure>
+
+## Chronotype
 
 <figure>
 <img src="output/tables/table_chronotype.png"
 alt="Summary table of the chronotype questionnaires" />
 <figcaption aria-hidden="true">Summary table of the chronotype
 questionnaires</figcaption>
+</figure>
+
+## Wear log
+
+<figure>
+<img src="output/tables/table_wearlog.png"
+alt="Summary table of the wear log" />
+<figcaption aria-hidden="true">Summary table of the wear
+log</figcaption>
 </figure>
 
 ## Exercise diary
