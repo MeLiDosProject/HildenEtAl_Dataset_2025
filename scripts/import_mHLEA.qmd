@@ -181,9 +181,10 @@ Native language is translated into English with AI and later checked by a site r
 ```{r}
 data_llm <- 
   read_csv("../data/AI_translations/lightexposurediary.csv") |> 
-  mutate(start = force_tz(start, tzs[[site]]))
+  select(activity_desc, activity_desc_english) |> 
+  distinct(activity_desc, .keep_all = TRUE)
 #add output to original
-data <- data |> left_join(data_llm, by = c("record_id", "start", "activity_desc"))
+data <- data |> left_join(data_llm, by = c("activity_desc"))
 data <-
   data |> 
   mutate(across(ends_with("english"), \(x) add_label(x, "Please specify your activity (English translation)")
