@@ -1,0 +1,25 @@
+record_id,start,activity_desc_english,activity_desc
+TUM_S001,2024-05-16T13:00:00Z,Sport indoors,Sport indoors
+TUM_S001,2024-05-17T14:00:00Z,Sport,Sport
+TUM_S001,2024-05-17T15:00:00Z,Sport,Sport
+TUM_S001,2024-05-17T17:00:00Z,Sport,Sport
+TUM_S002,2024-05-29T15:00:00Z,Sports indoors,Sports indoors
+TUM_S003,2024-06-05T10:00:00Z,Doctor appointment,Doctor appointment
+TUM_S003,2024-06-06T12:00:00Z,online lecture,online lecture
+TUM_S003,2024-06-06T13:00:00Z,online lecture,online lecture
+TUM_S003,2024-06-07T09:00:00Z,doctor appointment,doctor appointment
+TUM_S003,2024-06-08T19:00:00Z,Yoga,Yoga
+TUM_S008,2024-07-09T16:00:00Z,sports,sports
+TUM_S008,2024-07-09T17:00:00Z,sports,sports
+TUM_S008,2024-07-11T15:00:00Z,sports,sports
+TUM_S008,2024-07-11T16:00:00Z,sports,sports
+TUM_S008,2024-07-11T17:00:00Z,sports,sports
+TUM_S008,2024-07-12T11:00:00Z,pray,pray
+TUM_S008,2024-07-12T12:00:00Z,pray,pray
+TUM_S008,2024-07-13T08:00:00Z,shifting,shfting
+TUM_S008,2024-07-13T09:00:00Z,shifting,shfting
+TUM_S009,2024-07-20T15:00:00Z,Café indoors,Café indoors
+TUM_S009,2024-07-20T16:00:00Z,Cafe indoors,Café indoors
+TUM_S010,2024-07-22T15:00:00Z,restaurant,restaurant
+TUM_S010,2024-07-25T16:00:00Z,Sport outdoor,Sport outdoor
+TUM_S010,2024-07-25T17:00:00Z,Outdoor sports,Sport outdoor
