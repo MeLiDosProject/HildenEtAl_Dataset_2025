@@ -1,5 +1,5 @@
 ---
-title: "Import light"
+title: "Import light chest"
 author: "Johannes Zauner"
 format: 
   html:
@@ -9,7 +9,7 @@ format:
 
 # Preface
 
-This is a work-in-progress descriptive analysis of the `DidikogluEtAl2025` dataset.
+This is a work-in-progress descriptive analysis of the `HildenEtAl2025` dataset.
 
 ```{r}
 #| label: setup
@@ -44,7 +44,7 @@ site <- "TUM"
 
 ## Data import: wearable data
 
-The first step is the import of wearable data from the `head` position (mounted on glasses).
+The first step is the import of wearable data from the `chest` position (mounted on chest).
 
 ```{r}
 #| label: "general information"
@@ -55,7 +55,7 @@ pattern <- "^([0-9]{3})_"
 ```
 
 ```{r}
-files <- filefinder("actlumus_head", continuous = TRUE, negate = "Report")
+files <- filefinder("actlumus_chest", continuous = TRUE, negate = "Report")
 ```
 
 ```{r}
@@ -81,8 +81,8 @@ Study_dates <-
     select(Id, start, end) |> 
     mutate(across(c(start, end), \(x) force_tz(x, tzs[site])),
            trial = TRUE) |> 
-    filter(str_detect(Id, "_h$")) |>
-    mutate(Id = str_remove(Id, "_h$")) |> 
+    filter(str_detect(Id, "_c$")) |>
+    mutate(Id = str_remove(Id, "_c$")) |> 
   group_by(Id)
 
 #add the trim information to the dataset and filter by it
@@ -109,23 +109,24 @@ data_cleaned <-
 data |> 
   gap_handler(full.days = TRUE) 
 
-data_cleaned |> has_gaps() #no more implicit gaps
-data_cleaned |> has_irregulars() #no more irregular data
 data_cleaned |> gap_table(MEDI) |> cols_hide(ends_with("_n"))
 ```
 
 ## Exporting values
 
 ```{r}
-light_1min <- 
+data_cleaned <- 
+  data_cleaned |> mutate(position = "chest")
+
+light_chest_1min <- 
 data_cleaned |> 
   aggregate_Datetime("1 minute", numeric.handler = \(x) mean(x, na.rm = TRUE)) |> 
   remove_partial_data(MEDI, threshold.missing = "3 hours", by.date = TRUE)
 
-light <- data_cleaned
+light_chest <- data_cleaned
 
-save(light_1min, file = "../data/imported/light/light_1minute.RData")
-save(light, file = "../data/imported/light/light.RData")
+save(light_chest_1min, file = "../data/imported/light/light_chest_1minute.RData")
+save(light_chest, file = "../data/imported/light/light_chest.RData")
 ```
 
 ## Visualization
@@ -142,9 +143,6 @@ data_cleaned |>
   mutate(Id = Id |> fct_relabel(\(x) str_remove(x, prefix))) |> 
 grand_overview(coordinates[[site]], cities[[site]], countries[[site]], 
                country_colors[[site]], photoperiod_sequence = 1)
-
-ggsave("../output/figures/Figure_1.png", width = 17, height = 10, scale = 2, units = "cm")
-ggsave("../output/figures/Figure_1.jpeg", width = 17, height = 10, scale = 2, units = "cm")
 ```
 
 ## Stats
@@ -155,7 +153,6 @@ ggsave("../output/figures/Figure_1.jpeg", width = 17, height = 10, scale = 2, un
 #| message: false
 #| warning: false
 
-table_summary <-
 summary_table(
   data_cleaned, 
   coordinates = coordinates[[site]], 
@@ -164,11 +161,5 @@ summary_table(
   color = country_colors[[site]],
   histograms = TRUE
 )
-
-table_summary
-
-gtsave(table_summary, here("output/tables/table_summary.png"), vwidth = 850, expand = 30)
-gtsave(table_summary, here("output/tables/table_summary.pdf"))
-gtsave(table_summary |> cols_hide(c(plot)), here("output/tables/table_summary.docx"))
 ```
 
