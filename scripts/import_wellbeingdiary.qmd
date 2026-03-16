@@ -88,7 +88,7 @@ attr(data$Date, "label") <- "Date"
 ## Calculate WHO5 score
 
 ```{r}
-data <- data |> who5_scoring() 
+data <- data |> who5_scoring() |> arrange(record_id, Date)
 ```
 
 
