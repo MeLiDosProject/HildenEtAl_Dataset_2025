@@ -99,7 +99,7 @@ data$VLSQ8 <- add_label(data$VLSQ8, "VLSQ-8 sum score (light sensitivity)")
 
 ```{r}
 table <- 
-table_general(data, "VSLQ-8: light sensitivity")
+table_general(data, "VLSQ-8: light sensitivity")
 table
 gtsave(table |> as_gt(), filename = "../output/tables/table_vlsq8.png", vwidth = 800)
 ```
