@@ -34,9 +34,6 @@ authors:
     orcid: 'https://orcid.org/0000-0002-8572-9268'
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.17337841
-    description: Zenodo archive (V1.0.1)
-  - type: doi
     value: 10.5281/zenodo.16893901
     description: Zenodo Archive (latest version)
 repository-code: 'https://github.com/MeLiDosProject/HildenEtAl_Dataset_2025'
@@ -56,5 +53,5 @@ keywords:
   - melanopic
   - naturalistic setting
 license: CC-BY-4.0
-version: 1.0.0
-date-released: '2025-09-24'
+version: 1.2.0
+date-released: '2026-11-23'
